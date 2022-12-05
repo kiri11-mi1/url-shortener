@@ -51,6 +51,22 @@ func (m *mgo) Get(ctx context.Context, shorteningID string) (*model.Shortening, 
 	return modelShorteningFromMgo(shortening), nil
 }
 
+func (m *mgo) IncrementVisits(ctx context.Context, shorteningID string) error {
+	const op = "shortening.mgo.IncrementVisits"
+	var (
+		filter = bson.M{"_id": shorteningID}
+		update = bson.M{
+			"$inc": bson.M{"visits": 1},
+			"$set": bson.M{"updated_at": time.Now().UTC()},
+		}
+	)
+	_, err := m.col().UpdateOne(ctx, filter, update)
+	if err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	}
+	return nil
+}
+
 type mgoShortening struct {
 	Identifier  string    `bson:"_id"`
 	OriginalUrl string    `bson:"original_url"`
