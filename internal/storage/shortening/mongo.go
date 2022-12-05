@@ -21,22 +21,34 @@ func (m *mgo) col() *mongo.Collection {
 	return m.db.Collection("shortenings")
 }
 
-func (m *mgo) Put(ctx context.Context, shortenig model.Shortening) (*model.Shortening, error) {
+func (m *mgo) Put(ctx context.Context, shortening model.Shortening) (*model.Shortening, error) {
 	const op = "shortening.mgo.Put"
-	shortenig.CreatedAt = time.Now().UTC()
-	count, err := m.col().CountDocuments(ctx, bson.M{"_id": shortenig.Identifier})
+	shortening.CreatedAt = time.Now().UTC()
+	count, err := m.col().CountDocuments(ctx, bson.M{"_id": shortening.Identifier})
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 	if count > 0 {
 		return nil, fmt.Errorf("%s: %w", op, model.ErrIdentifierIsExist)
 	}
-	_, err = m.col().InsertOne(ctx, mgoShorteningFromModel(shortenig))
+	_, err = m.col().InsertOne(ctx, mgoShorteningFromModel(shortening))
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	return &shortenig, nil
+	return &shortening, nil
+}
+
+func (m *mgo) Get(ctx context.Context, shorteningID string) (*model.Shortening, error) {
+	const op = "shortening.mgo.Get"
+	var shortening mgoShortening
+	if err := m.col().FindOne(ctx, bson.M{"_id": shorteningID}).Decode(&shortening); err != nil {
+		if err == mongo.ErrNoDocuments {
+			return nil, fmt.Errorf("%s: %w", op, model.ErrNotFound)
+		}
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+	return modelShorteningFromMgo(shortening), nil
 }
 
 type mgoShortening struct {
@@ -57,8 +69,8 @@ func mgoShorteningFromModel(shortening model.Shortening) mgoShortening {
 	}
 }
 
-func modelShorteningFromMgo(shortening mgoShortening) model.Shortening {
-	return model.Shortening{
+func modelShorteningFromMgo(shortening mgoShortening) *model.Shortening {
+	return &model.Shortening{
 		Identifier:  shortening.Identifier,
 		OriginalUrl: shortening.OriginalUrl,
 		Visits:      shortening.Visits,
