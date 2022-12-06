@@ -2,6 +2,7 @@ package shorten_test
 
 import (
 	"context"
+	"github.com/samber/mo"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"testing"
@@ -20,6 +21,19 @@ func TestService_Shorten(t *testing.T) {
 		require.NoError(t, err)
 
 		require.NotEmpty(t, createdShortening.Identifier)
+		assert.Equal(t, input.RawURL, createdShortening.OriginalUrl)
+		assert.NotZero(t, createdShortening.CreatedAt)
+	})
+	t.Run("use custom id", func(t *testing.T) {
+		const identifier = "exmpl"
+		var (
+			svc   = shorten.NewService(shortening.NewInMemory())
+			input = model.ShortenInput{RawURL: "https://example.com", Identifier: mo.Some(identifier)}
+		)
+		createdShortening, err := svc.Shorten(context.Background(), input)
+		require.NoError(t, err)
+
+		assert.Equal(t, identifier, createdShortening.Identifier)
 		assert.Equal(t, input.RawURL, createdShortening.OriginalUrl)
 		assert.NotZero(t, createdShortening.CreatedAt)
 	})
