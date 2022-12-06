@@ -37,5 +37,16 @@ func TestService_Shorten(t *testing.T) {
 		assert.Equal(t, input.RawURL, createdShortening.OriginalUrl)
 		assert.NotZero(t, createdShortening.CreatedAt)
 	})
+	t.Run("returns error if id is already taken", func(t *testing.T) {
+		const identifier = "exmpl"
+		var (
+			svc   = shorten.NewService(shortening.NewInMemory())
+			input = model.ShortenInput{RawURL: "https://example.com", Identifier: mo.Some(identifier)}
+		)
+		_, err := svc.Shorten(context.Background(), input)
+		require.NoError(t, err)
 
+		_, err = svc.Shorten(context.Background(), input)
+		assert.Equal(t, err, model.ErrIdentifierIsExist)
+	})
 }
