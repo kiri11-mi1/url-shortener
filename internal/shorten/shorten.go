@@ -1,5 +1,9 @@
 package shorten
 
+import (
+	"net/url"
+)
+
 const ALPHABET = "qwertyuiopasdfghjkzxcvbnmQWERTYUPASDFGHJKLZXCVBNM123456789"
 
 var ALPHABET_LEN = uint32(len(ALPHABET))
@@ -23,4 +27,13 @@ func getReverseArray(array []uint32) []uint32 {
 		newArray = append(newArray, array[i])
 	}
 	return newArray
+}
+
+func PrependBaseURL(baseURL, identifier string) (string, error) {
+	parsed, err := url.Parse(baseURL)
+	if err != nil {
+		return "", err
+	}
+	parsed.Path = identifier
+	return parsed.String(), nil
 }
