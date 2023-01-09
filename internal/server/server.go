@@ -35,7 +35,7 @@ func (s *Server) setupRouter() {
 	restricted := s.e.Group("/api")
 	{
 		restricted.POST("/shorten", HandleShorten(s.shortener))
-		restricted.GET("/health/", HandleHealth())
+		restricted.GET("/health", HandleHealth())
 	}
 	s.AddCloser(s.e.Shutdown)
 }
