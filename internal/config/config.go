@@ -2,6 +2,7 @@ package config
 
 import (
 	"context"
+	"fmt"
 	"github.com/sethvargo/go-envconfig"
 	"log"
 	"strings"
@@ -47,4 +48,8 @@ func UpcaseLookuper(next envconfig.Lookuper) *upcaseLookuper {
 type DBConfig struct {
 	DSN      string `env:"mongodb_dsn"`
 	Database string `env:"mongodb_database"`
+}
+
+func (c Config) ListenAddr() string {
+	return fmt.Sprintf("%s:%d", c.Host, c.Port)
 }
