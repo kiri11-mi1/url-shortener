@@ -10,6 +10,9 @@ import (
 
 type Config struct {
 	BaseURL string `env:"BASE_URL, default=http://localhost:8080"`
+	Host    string `env:"host,default=0.0.0.0"`
+	Port    int    `env:"port,default=8080"`
+	DB      DBConfig
 }
 
 var (
@@ -39,4 +42,9 @@ func UpcaseLookuper(next envconfig.Lookuper) *upcaseLookuper {
 	return &upcaseLookuper{
 		Next: next,
 	}
+}
+
+type DBConfig struct {
+	DSN      string `env:"mongodb_dsn"`
+	Database string `env:"mongodb_database"`
 }
