@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"net/http"
 	"url-shortener/internal/shorten"
 )
 
@@ -40,4 +41,18 @@ func (s *Server) setupRouter() {
 
 func (s *Server) AddCloser(closer CloseFunc) {
 	s.closers = append(s.closers, closer)
+}
+
+func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	s.e.ServeHTTP(w, r)
+}
+
+func (s *Server) Shutdown(ctx context.Context) error {
+	for _, fn := range s.closers {
+		if err := fn(ctx); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
