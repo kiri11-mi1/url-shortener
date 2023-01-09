@@ -20,14 +20,14 @@ func New(shortener *shorten.Service) *Server {
 	s := &Server{
 		shortener: shortener,
 	}
-	// todo: setup router
+	s.setupRouter()
 	return s
 }
 
 func (s *Server) setupRouter() {
 	s.e = echo.New()
 	s.e.HideBanner = true
-	// todo: validator
+	s.e.Validator = NewValidator()
 
 	s.e.Pre(middleware.RemoveTrailingSlash())
 	s.e.Use(middleware.RequestID())
@@ -35,8 +35,9 @@ func (s *Server) setupRouter() {
 	restricted := s.e.Group("/api")
 	{
 		restricted.POST("/shorten", HandleShorten(s.shortener))
+		restricted.GET("/health/", HandleHealth())
 	}
-
+	s.AddCloser(s.e.Shutdown)
 }
 
 func (s *Server) AddCloser(closer CloseFunc) {
