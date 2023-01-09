@@ -37,6 +37,7 @@ func (s *Server) setupRouter() {
 		restricted.POST("/shorten", HandleShorten(s.shortener))
 		restricted.GET("/health", HandleHealth())
 	}
+	s.e.GET("/:identifier", HandleRedirect(s.shortener))
 	s.AddCloser(s.e.Shutdown)
 }
 
