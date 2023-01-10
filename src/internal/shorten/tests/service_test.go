@@ -50,3 +50,24 @@ func TestService_Shorten(t *testing.T) {
 		assert.Equal(t, err, model.ErrIdentifierIsExist)
 	})
 }
+
+func TestService_Redirect(t *testing.T) {
+	t.Run("success redirect with generating identifier", func(t *testing.T) {
+		var (
+			inMemoryStorage = shortening.NewInMemory()
+			svc             = shorten.NewService(inMemoryStorage)
+			input           = model.ShortenInput{RawURL: "https://example.com"}
+		)
+		createdShortening, err := svc.Shorten(context.Background(), input)
+		require.NoError(t, err)
+
+		redirectURL, err := svc.Redirect(context.Background(), createdShortening.Identifier)
+		require.NoError(t, err)
+
+		updatedShortening, err := inMemoryStorage.Get(context.Background(), createdShortening.Identifier)
+		require.NoError(t, err)
+
+		assert.Equal(t, input.RawURL, redirectURL)
+		assert.True(t, updatedShortening.Visits-createdShortening.Visits == 1)
+	})
+}
