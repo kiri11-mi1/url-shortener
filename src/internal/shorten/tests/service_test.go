@@ -91,4 +91,10 @@ func TestService_Redirect(t *testing.T) {
 		assert.Equal(t, input.RawURL, redirectURL)
 		assert.True(t, updatedShortening.Visits-createdShortening.Visits == 1)
 	})
+	t.Run("fail redirect with not existing identifier", func(t *testing.T) {
+		const notExistingIdentifier = "blabla"
+		var svc = shorten.NewService(shortening.NewInMemory())
+		_, err := svc.Redirect(context.Background(), notExistingIdentifier)
+		assert.ErrorIs(t, err, model.ErrNotFound)
+	})
 }
