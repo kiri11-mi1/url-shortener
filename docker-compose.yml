@@ -15,3 +15,23 @@ services:
     env_file: .env
     ports:
       - 8081:8081
+
+  backend:
+    build:
+      dockerfile: docker/backend/Dockerfile
+      context: .
+    restart: always
+    depends_on:
+      - mongodb
+    env_file:
+      - .env
+
+  nginx:
+    image: nginx:1.23-alpine
+    restart: always
+    volumes:
+      - ./docker/nginx/:/etc/nginx/conf.d
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
