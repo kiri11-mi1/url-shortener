@@ -5,6 +5,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"net/http"
+	"url-shortener/internal/server/handlers"
 	"url-shortener/internal/shorten"
 )
 
@@ -34,10 +35,10 @@ func (s *Server) setupRouter() {
 
 	restricted := s.e.Group("/api")
 	{
-		restricted.POST("/shorten", HandleShorten(s.shortener))
-		restricted.GET("/health", HandleHealth())
+		restricted.POST("/shorten", handlers.HandleShorten(s.shortener))
+		restricted.GET("/health", handlers.HandleHealth())
 	}
-	s.e.GET("/:identifier", HandleRedirect(s.shortener))
+	s.e.GET("/:identifier", handlers.HandleRedirect(s.shortener))
 	s.AddCloser(s.e.Shutdown)
 }
 
