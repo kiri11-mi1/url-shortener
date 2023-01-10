@@ -11,8 +11,8 @@ import (
 
 type Config struct {
 	BaseURL string `env:"BASE_URL, default=http://localhost:8080"`
-	Host    string `env:"host,default=0.0.0.0"`
-	Port    int    `env:"port,default=8080"`
+	Host    string `env:"HOST,default=0.0.0.0"`
+	Port    int    `env:"PORT,default=8080"`
 	DB      DBConfig
 }
 
