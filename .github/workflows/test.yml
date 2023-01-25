@@ -14,7 +14,7 @@ jobs:
           go-version: 1.19.5
 
       - name: Install Dependencies
-        run: go get .
+        run: go get ./src/...
 
       - name: Build
         run: go build -v ./src/...
