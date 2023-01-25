@@ -22,7 +22,7 @@ type shortenRequest struct {
 	Identifier string `json:"identifier,omitempty" validate:"omitempty,alphanum"`
 }
 
-type shortenResponse struct {
+type ShortenResponse struct {
 	ShortURL string `json:"short_url,omitempty"`
 	Message  string `json:"message,omitempty"`
 }
@@ -60,7 +60,7 @@ func HandleShorten(shortener shortener) echo.HandlerFunc {
 		}
 		return c.JSON(
 			http.StatusOK,
-			shortenResponse{ShortURL: shortURL},
+			ShortenResponse{ShortURL: shortURL},
 		)
 	}
 }
