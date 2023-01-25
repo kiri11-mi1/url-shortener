@@ -13,11 +13,13 @@ jobs:
         with:
           go-version: 1.19.5
 
-      - name: Build
+      - name: Install Dependencies
         run: |
-          mv .env.example .env
-          make up
-          make test
-#
-#      - name: Test
-#        run: make test
+          cd ./src
+          go get .
+
+      - name: Test
+        run: |
+          cd ./src
+          go test ./tests/...
+        
