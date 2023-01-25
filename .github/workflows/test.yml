@@ -13,11 +13,6 @@ jobs:
         with:
           go-version: 1.19.5
 
-      - name: Install Dependencies
-        run: |
-          cd ./src
-          go get ./...
-
       - name: Test
         run: |
           cd ./src
