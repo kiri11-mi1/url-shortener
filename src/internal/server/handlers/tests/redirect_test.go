@@ -47,10 +47,7 @@ func TestHandleRedirect(t *testing.T) {
 	})
 
 	t.Run("not found identifier", func(t *testing.T) {
-		const (
-			originalURL = "https://example.com"
-			identifier  = "testExample"
-		)
+		const identifier = "testExample"
 		var (
 			redirecter = shorten.NewService(shortening.NewInMemory())
 			request    = httptest.NewRequest(http.MethodGet, "/"+identifier, nil)
