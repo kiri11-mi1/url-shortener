@@ -1,4 +1,4 @@
-name: url-shortener
+name: Check Tests
 
 on: [push]
 
@@ -16,10 +16,9 @@ jobs:
       - name: Install Dependencies
         run: |
           cd ./src
-          go get .
+          go get ./...
 
       - name: Test
         run: |
           cd ./src
           go test ./tests/...
-        
